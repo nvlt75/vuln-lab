@@ -34,9 +34,9 @@ jobs:
             --level=1 \
             --technique=B \
             --output-dir=sqlmap-results
-          
+
       - name: Upload results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sqlmap-results
           path: sqlmap-results/
