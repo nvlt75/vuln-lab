@@ -29,12 +29,12 @@ def login():
     username = request.args.get('username', '')
     password = request.args.get('password', '')
 
-    # VULNERABLE : requête SQL non sécurisée
+    # SECURISÉ : requêtes préparées avec paramètres
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-    query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
-    print(f"[DEBUG] Query: {query}")
-    c.execute(query)
+    query = "SELECT * FROM users WHERE username=? AND password=?"
+    print(f"[DEBUG] Query sécurisée exécutée")
+    c.execute(query, (username, password))
     user = c.fetchone()
     conn.close()
 
@@ -46,3 +46,4 @@ def login():
 if __name__ == '__main__':
     init_db()
     app.run(host='0.0.0.0', port=5000, debug=True)
+
