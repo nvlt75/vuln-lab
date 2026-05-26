@@ -1,0 +1,42 @@
+name: Security Test - SQLi
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  sqlmap-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Python & Flask
+        run: |
+          pip install flask
+
+      - name: Start vulnerable app
+        run: |
+          python3 app.py &
+          sleep 3
+
+      - name: Install sqlmap
+        run: |
+          sudo apt-get install -y sqlmap
+
+      - name: Run SQLi test
+        run: |
+          sqlmap -u "http://localhost:5000/login?username=admin&password=test" \
+            --batch \
+            --level=1 \
+            --technique=B \
+            --output-dir=sqlmap-results
+          
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        with:
+          name: sqlmap-results
+          path: sqlmap-results/
